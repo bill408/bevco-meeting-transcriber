@@ -33,8 +33,21 @@ easy to follow.
   immediately and processes in the background.
 - `GET /health` — health check (used by Railway).
 - `GET /` — service info.
-- `GET /status/{file_id}` — in-memory job status for debugging (`processing` /
-  `done` / `error`). Resets on each deploy.
+- `GET /status/{file_id}`, `GET /jobs` — in-memory job status for debugging
+  (`processing` / `done` / `error`). Resets on each deploy. Require the secret;
+  disabled when `WEBHOOK_SECRET` is unset.
+
+### Authentication
+
+Set `WEBHOOK_SECRET` in Railway and send it from Zoho Flow as header
+`X-Webhook-Secret` (or `?key=` on the URL). Until it is set, `/process_meeting`
+accepts unauthenticated calls and logs a warning. `/debug/zoho` and the OpenAPI
+docs routes are removed.
+
+### File names
+
+Meeting names are sanitized (`\ / : * ? " < > |` and control characters → `-`)
+before being used for temp paths and output file names.
 
 ### Webhook payload (from Zoho Flow)
 
